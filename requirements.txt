@@ -1,0 +1,4 @@
+beautifulsoup4==4.9.3
+Flask==2.3.2
+requests==2.31.0
+six==1.16.0
