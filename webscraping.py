@@ -12,7 +12,7 @@ def info_operator(soup):
     info['Name'] = [n.find('h1').get_text() for n in name][0]
     info['Squad'] = [q.find('span').get_text() for q in squad][0]
     info['Specialties'] = [p.get_text('', strip=True)
-                           for p in specialties][0][16:] 
+                           for p in specialties][0][17:] 
 
     element = soup.find_all(class_='operator__header__stat')
     for h in element:
