@@ -1,15 +1,16 @@
 # scraping info of the operator
-def info_operator(soup):
+
+def info_operator(soup: any, operator: str) -> any:
 
     info = {}
 
-    name = soup.find_all('div', class_='operator__header__icons__names')
+    # name = soup.find_all('div', class_='operator__header__icons__names')
     side = soup.find_all('div', class_='operator__header__side__detail')
     squad = soup.find_all('div', class_='operator__header__squad__detail')
     specialties = soup.find_all('div', class_='operator__header__roles')
 
     info['Side'] = [s.find('span').get_text() for s in side][0]
-    info['Name'] = [n.find('h1').get_text() for n in name][0]
+    info['Name'] = operator # [n.find('h1').get_text() for n in name][0]
     info['Squad'] = [q.find('span').get_text() for q in squad][0]
     info['Specialties'] = [p.get_text('', strip=True)
                            for p in specialties][0][17:] 
@@ -18,6 +19,7 @@ def info_operator(soup):
     for h in element:
         info[h.find('span').text] = len([e.get_text('', strip=True)
                                          for e in h.find_all(class_='is-active')])
+
 
     return info
 
@@ -36,6 +38,11 @@ def loadout(soup) -> dict:
                 if e == i:
                     loadout[t.get_text(' ', strip=True)] = value.get_text(
                         ', ', strip=True)
+                    
+                    
+    loadout["primary_weapon"] = loadout.pop("Primary Weapon")
+    loadout["secondary_weapon"] = loadout.pop("Secondary Weapon")
+    loadout["ability"] = loadout.pop("Unique Ability")
 
     return loadout
 
@@ -53,7 +60,7 @@ def biography(soup) -> dict:
     for b in biography_elements:
         bio = b.get_text(' ', strip=True)
 
-    bio = remove_unicode_characters(bio)
+    #bio = remove_unicode_characters(bio)
     bio_and_psy['Biography'] = bio
 
     return bio_and_psy
@@ -71,15 +78,20 @@ def biography_info(soup) -> dict:
         for e, title in enumerate(b.findAll(class_='operator__biography__info__title', text=True)):
             for i, value in enumerate(b.findAll(class_='operator__biography__info__value', text=True)):
                 if e == i:
-                    biography_elements[title.get_text('', strip=True)] = remove_unicode_characters(
-                        value.get_text('', strip=True))
+                    biography_elements[title.get_text('', strip=True)] = value.get_text('', strip=True)
+                    # biography_elements[title.get_text('', strip=True)] = remove_unicode_characters(
+                        # value.get_text('', strip=True))
+    
+    for k, v in biography_elements.items():
+        new_k = k.replace(" ", "")
+        biography_elements[new_k] = biography_elements.pop(k)
 
     return biography_elements
 
 # create list of dictionaries
 
 
-def export_json(soup):
+""" def export_json(soup):
 
     list_of_dicts = []
 
@@ -88,12 +100,13 @@ def export_json(soup):
     list_of_dicts.append(biography_info(soup))
     list_of_dicts.append(biography(soup))
 
-    return list_of_dicts
+    return list_of_dicts """
+
 
 # replace UNICODE characters -- ugly :-o
 
 
-def remove_unicode_characters(text: str) -> str:
+""" def remove_unicode_characters(text: str) -> str:
     return (text.replace(u"\u2018", "'")
                 .replace(u"\u2019", "'")
                 .replace(u"\u201c", '"')
@@ -122,4 +135,4 @@ def remove_unicode_characters(text: str) -> str:
                 .replace(u"\u00fc", 'u')
                 .replace(u"\u00e4", 'e')
                 .replace(u"\u00f6", 'u')
-            )
+            ) """
